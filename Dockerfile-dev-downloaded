@@ -1,4 +1,4 @@
-FROM restreamio/gstreamer:dev-dependencies
+FROM camp-gstreamer:dev-dependencies
 
 ARG GSTREAMER_REPOSITORY=https://gitlab.freedesktop.org/philn/gstreamer.git
 

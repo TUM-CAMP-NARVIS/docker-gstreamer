@@ -1,4 +1,4 @@
-FROM restreamio/gstreamer:dev-downloaded
+FROM camp-gstreamer:dev-downloaded
 
 ARG WEBKIT_USE_SCCACHE=0
 
