@@ -2,7 +2,7 @@
 set -e
 
 if [[ -z "$1" ]]; then
-    echo -e "Usage example:\n  $0 1.20.1"
+    echo -e "Usage example:\n  $0 1.20.2"
     exit 1
 fi
 
@@ -14,7 +14,7 @@ else
 fi
 
 # Make sure to always have fresh base image
-docker pull ubuntu:21.04
+docker pull ubuntu:22.04
 # Install dev dependencies
 docker build -t restreamio/gstreamer:dev-dependencies -f Dockerfile-dev-dependencies .
 # Download source code
