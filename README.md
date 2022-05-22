@@ -1,4 +1,11 @@
 # docker-gstreamer
+
+adapted by Ulrich Eck:
+- added NVEnc support
+- Added python3 support
+- Added jupyter notebook
+
+
 [![Docker Pulls](https://img.shields.io/docker/pulls/restreamio/gstreamer)](https://hub.docker.com/r/restreamio/gstreamer)
 
 Ubuntu 21.04-based container images with upstream GStreamer and plugins pre-installed

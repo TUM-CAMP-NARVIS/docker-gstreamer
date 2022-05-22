@@ -1,6 +1,84 @@
-FROM ubuntu:21.04
+FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+
+# ARGS for Build
+ARG nvidia_driver_version=515
+ARG nvidia_apt_version=515.43.04-0ubuntu1
+ARG ubuntu_short_version=2204
+
+
+###########
+# NVIDIA Driver
+
+RUN apt-get update --fix-missing
+RUN apt-get dist-upgrade -y
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+                       pkg-config software-properties-common gpg-agent
+
+RUN DEBIAN_FRONTEND=noninteractive add-apt-repository -y ppa:graphics-drivers/ppa
+RUN apt-get update --fix-missing
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gnupg2 curl ca-certificates && \
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$ubuntu_short_version/x86_64/3bf863cc.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$ubuntu_short_version/x86_64 /" > /etc/apt/sources.list.d/cuda.list
+
+
+RUN apt-get update
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nvidia-driver-$nvidia_driver_version=$nvidia_apt_version libnvidia-gl-$nvidia_driver_version=$nvidia_apt_version \
+    nvidia-dkms-$nvidia_driver_version=$nvidia_apt_version nvidia-kernel-source-$nvidia_driver_version=$nvidia_apt_version libnvidia-compute-$nvidia_driver_version=$nvidia_apt_version \
+    libnvidia-decode-$nvidia_driver_version=$nvidia_apt_version libnvidia-encode-$nvidia_driver_version=$nvidia_apt_version \
+    xserver-xorg-video-nvidia-$nvidia_driver_version=$nvidia_apt_version libnvidia-cfg1-$nvidia_driver_version=$nvidia_apt_version \
+    libnvidia-fbc1-$nvidia_driver_version=$nvidia_apt_version nvidia-kernel-common-$nvidia_driver_version=$nvidia_apt_version libnvidia-extra-$nvidia_driver_version=$nvidia_apt_version\
+    nvidia-compute-utils-$nvidia_driver_version=$nvidia_apt_version \
+    nvidia-utils-$nvidia_driver_version=$nvidia_apt_version
+
+
+############
+# CUDA 
+ENV CUDA_VERSION 11.7.0
+
+# For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    cuda-cudart-11-7 \
+    cuda-compat-11-7 \
+    && ln -s cuda-11.4 /usr/local/cuda && \
+    rm -rf /var/lib/apt/lists/*
+
+# Required for nvidia-docker v1
+RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
+    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV NVIDIA_REQUIRE_CUDA "cuda>=11.4 brand=tesla,driver>=418,driver<=515 brand=tesla,driver>=460,driver<=515"
+
+###########
+# Develop Docker
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    cuda-cudart-dev-11-7 \
+    cuda-command-line-tools-11-7 \
+    cuda-minimal-build-11-7 \
+    cuda-libraries-dev-11-7 \
+    cuda-nvml-dev-11-7 \
+    libnpp-dev-11-7 \
+    libcublas-dev-11-7 \
+    libcusparse-dev-11-7
+
+
+### 
+# python
+
+RUN apt-get install -y --no-install-recommends python3 python3-pip python3-setuptools \
+                       python3-wheel ninja-build
+
+## gstreamer 
 
 RUN \
     apt-get update && \
@@ -10,7 +88,7 @@ RUN \
         libunwind8 \
         libdw1 \
         libgmp10 \
-        libgsl25 \
+        libgsl27 \
         libglib2.0-0 \
         libcap2 \
         liborc-0.4-0 \
@@ -37,7 +115,7 @@ RUN \
         libegl1 \
         libepoxy0 \
         libgcrypt20 \
-        libwebp6 \
+        libwebp7 \
         libwebpdemux2 \
         libwebpmux3 \
         libopenjp2-7 \
@@ -51,7 +129,7 @@ RUN \
         libass9 \
         libchromaprint1 \
         libcurl3-gnutls \
-        libaom0 \
+        libaom3 \
         libbz2-1.0 \
         liblcms2-2 \
         libbs2b0 \
@@ -59,10 +137,10 @@ RUN \
         libfaac0 \
         libfaad2 \
         libflite1 \
-        libssl1.1 \
+        libssl3 \
         ladspa-sdk \
         libfdk-aac2 \
-        libfluidsynth2 \
+        libfluidsynth3 \
         libgsm1 \
         libkate1 \
         libgme0 \
@@ -89,7 +167,7 @@ RUN \
         libzvbi0 \
         libopenexr25 \
         libwildmidi2 \
-        libx265-192 \
+        libx265-199 \
         libzbar0 \
         wayland-protocols \
         libaa1 \
@@ -97,14 +175,14 @@ RUN \
         libcaca0 \
         libdv4 \
         libmpg123-0 \
-        libvpx6 \
+        libvpx7 \
         libshout3 \
         libspeex1 \
         libtag1v5 \
         libtwolame0 \
         libwavpack1 \
         liba52-0.7.4 \
-        libx264-160 \
+        libx264-163 \
         libopencore-amrnb0 \
         libopencore-amrwb0 \
         libmpeg2-4 \

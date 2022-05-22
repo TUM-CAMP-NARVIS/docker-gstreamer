@@ -90,7 +90,7 @@ popd
 
 # Re-build GStreamer with WPE enabled
 pushd gstreamer
-meson build --reconfigure -Dgst-plugins-bad:wpe=enabled
+meson build --reconfigure -Dgst-plugins-bad:wpe=enabled -Dgst-plugins-
 ninja -C build install
 # This is where we'll grab build artifacts from
 DESTDIR=/compiled-binaries ninja -C build install
