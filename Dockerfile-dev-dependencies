@@ -22,9 +22,8 @@ RUN apt-get update --fix-missing
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 curl ca-certificates && \
-    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$ubuntu_short_version/x86_64/3bf863cc.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$ubuntu_short_version/x86_64 /" > /etc/apt/sources.list.d/cuda.list
-
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$ubuntu_short_version/x86_64/3bf863cc.pub | gpg --dearmour -o /usr/share/keyrings/nvidiacuda.gpg  && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/nvidiacuda.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$ubuntu_short_version/x86_64 /" > /etc/apt/sources.list.d/cuda.list
 
 RUN apt-get update
 
