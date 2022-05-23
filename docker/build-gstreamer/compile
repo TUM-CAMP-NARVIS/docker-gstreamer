@@ -1,31 +1,11 @@
 #!/bin/bash
 set -e
 
-# Compile GStreamer dependencies first.
-for repo in libwpe wpebackend-fdo; do
-  pushd $repo
-  if [[ $DEBUG == 'true' ]]; then
-    if [[ $OPTIMIZATIONS == 'true' ]]; then
-      meson build -D prefix=/usr -D buildtype=debugoptimized
-    else
-      meson build -D prefix=/usr -D buildtype=debug
-    fi
-  else
-    meson build -D prefix=/usr -D buildtype=release -D b_lto=true
-  fi
-
-  # This is needed for other plugins to be built properly
-  ninja -C build install
-  # This is where we'll grab build artifacts from
-  DESTDIR=/compiled-binaries ninja -C build install
-  popd
-done
-
 pushd gstreamer
 # TODO: Hack: `-D gupnp=disabled` is for libnice, because libgupnp-igd causes memory leaks
 # msdk=enabled is for gst-plugings-bad to include msdk elements
 # with_x11=no is for gstreamer-vaapi to exclude X11-related functionality (that would otherwise require extra dependencies)
-MESON_OPTIONS="-Dvaapi=enabled -Dcuda=enabled -Dnvcodec=enabled -Dgpl=enabled -Dexamples=disabled -Dtests=disabled -Ddoc=disabled -Dqt5=disabled -Dpython=enabled -Dges=disabled -Ddevtools=disabled -Dintrospection=disabled -Dlibnice:gupnp=disabled -Dgst-plugins-bad:msdk=enabled -Dgstreamer-vaapi:with_x11=no"
+MESON_OPTIONS="-Dvaapi=enabled -Dgst-plugins-bad:nvcodec=enabled -Dgpl=enabled -Dexamples=disabled -Dtests=disabled -Ddoc=disabled -Dqt5=disabled -Dpython=enabled -Dges=disabled -Ddevtools=disabled -Dintrospection=enabled -Dlibnice:gupnp=disabled -Dgst-plugins-bad:msdk=enabled -Dgstreamer-vaapi:with_x11=no"
 if [[ $DEBUG == 'true' ]]; then
   if [[ $OPTIMIZATIONS == 'true' ]]; then
     meson build -D prefix=/usr $MESON_OPTIONS -D buildtype=debugoptimized
