@@ -124,7 +124,13 @@ apt-get install -y --no-install-recommends \
   intel-media-va-driver-non-free \
   libudev-dev \
   python3-dev \
-  python3-numpy
+  python3-numpy \
+  libmount-dev \
+  flex \
+  bison \
+  nasm \
+  gobject-introspection \
+  libcairo2-dev
 pip3 install meson ninja
 apt-get clean
 rm -rf /var/lib/apt/lists/*
