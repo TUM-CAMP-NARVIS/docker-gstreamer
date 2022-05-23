@@ -5,7 +5,7 @@ pushd gstreamer
 # TODO: Hack: `-D gupnp=disabled` is for libnice, because libgupnp-igd causes memory leaks
 # msdk=enabled is for gst-plugings-bad to include msdk elements
 # with_x11=no is for gstreamer-vaapi to exclude X11-related functionality (that would otherwise require extra dependencies)
-MESON_OPTIONS="-Dvaapi=enabled -Dgst-plugins-bad:nvcodec=enabled -Dgpl=enabled -Dexamples=disabled -Dtests=disabled -Ddoc=disabled -Dqt5=disabled -Dpython=enabled -Dgst-plugins-bad:webrtc=enabled -Dgst-plugins-base:opus=enabled -Dgst-plugins-bad:srtp=enabled -Dgst-plugins-good:vpx=enabled -Dges=enabled -Ddevtools=disabled -Dintrospection=enabled -Dlibnice:gupnp=disabled -Dgst-plugins-bad:msdk=enabled -Dgstreamer-vaapi:with_x11=no"
+MESON_OPTIONS="-Dvaapi=enabled -Dgst-plugins-bad:nvcodec=enabled -Dgpl=enabled -Dexamples=disabled -Dtests=disabled -Ddoc=disabled -Dqt5=disabled -Dpython=enabled -Dgst-plugins-bad:webrtc=enabled -Dgst-plugins-base:opus=enabled -Dgst-plugins-bad:srtp=enabled -Dgst-plugins-good:vpx=enabled -Dges=enabled -Ddevtools=disabled -Dintrospection=enabled -Dlibnice:gupnp=disabled -Dgst-plugins-bad:msdk=enabled -Dgstreamer-vaapi:with_x11=no -Dgst-python:libpython-dir=/opt/conda/lib -Dgst-python:python=/opt/conda/bin/python3.9 -Dgst-editing-services:libpython-dir=/opt/conda/lib" 
 if [[ $DEBUG == 'true' ]]; then
   if [[ $OPTIMIZATIONS == 'true' ]]; then
     meson build -D prefix=/usr $MESON_OPTIONS -D buildtype=debugoptimized
