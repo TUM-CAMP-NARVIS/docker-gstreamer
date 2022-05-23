@@ -79,7 +79,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
 ENV CONDA_DIR=/opt/conda \
     SHELL=/bin/bash 
 ENV PATH="${CONDA_DIR}/bin:${PATH}" 
-ARG PYTHON_VERSION=3.9
+ARG PYTHON_VERSION=3.10
 
 COPY initial-condarc "${CONDA_DIR}/.condarc"
 WORKDIR /tmp
@@ -113,7 +113,8 @@ RUN set -x && \
     rm micromamba && \
     # Pin major.minor version of python
     mamba list python | grep '^python ' | tr -s ' ' | cut -d ' ' -f 1,2 >> "${CONDA_DIR}/conda-meta/pinned" && \
-    mamba clean --all -f -y 
+    mamba clean --all -f -y && \
+    update-alternatives --install ${CONDA_DIR}/bin/python3 python /usr/bin/python3 20
 
 
 COPY docker/build-gstreamer/install-dependencies /
