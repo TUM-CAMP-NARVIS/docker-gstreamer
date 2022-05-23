@@ -192,6 +192,7 @@ RUN \
         libavutil56 \
         libva2 \
         libmfx1 \
+        libxv1 \
         libva-wayland2 \
         intel-media-va-driver-non-free && \
     apt-get clean && \
