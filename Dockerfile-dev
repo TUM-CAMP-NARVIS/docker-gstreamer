@@ -1,4 +1,4 @@
-FROM camp-gstreamer:latest-dev-with-source
+FROM camp-gstreamer:dev-with-source
 
 # Only development dependencies
 FROM camp-gstreamer:dev-dependencies
