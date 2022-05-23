@@ -23,12 +23,12 @@ docker build -t camp-gstreamer:dev-downloaded \
     --build-arg GSTREAMER_CHECKOUT=$1 \
     -f Dockerfile-dev-downloaded .
 # Build dev image with source code included
-docker build --build-arg WEBKIT_USE_SCCACHE=$WEBKIT_USE_SCCACHE -t camp-gstreamer:$1-dev-with-source -f Dockerfile-dev-with-source .
+docker build --build-arg WEBKIT_USE_SCCACHE=$WEBKIT_USE_SCCACHE -t camp-gstreamer:dev-with-source -f Dockerfile-dev-with-source .
 # Build dev image with just binaries
-docker build -t camp-gstreamer:$1-dev -f Dockerfile-dev .
+docker build -t camp-gstreamer:dev -f Dockerfile-dev .
 # Build base production image with necessary dependencies
 docker build -t camp-gstreamer:prod-base -f Dockerfile-prod-base .
 # Build production image optimized binaries and no debug symbols (-O3 LTO)
-docker build --build-arg WEBKIT_USE_SCCACHE=$WEBKIT_USE_SCCACHE -t camp-gstreamer:$1-prod -f Dockerfile-prod .
+docker build --build-arg WEBKIT_USE_SCCACHE=$WEBKIT_USE_SCCACHE -t camp-gstreamer:prod -f Dockerfile-prod .
 # Build production image optimized binaries and debug symbols
-docker build --build-arg WEBKIT_USE_SCCACHE=$WEBKIT_USE_SCCACHE -t camp-gstreamer:$1-prod-dbg -f Dockerfile-prod-dbg .
+docker build --build-arg WEBKIT_USE_SCCACHE=$WEBKIT_USE_SCCACHE -t camp-gstreamer:prod-dbg -f Dockerfile-prod-dbg .
