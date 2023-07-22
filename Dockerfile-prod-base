@@ -3,8 +3,8 @@ FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 # ARGS for Build
-ARG nvidia_driver_version=515
-ARG nvidia_apt_version=515.43.04-0ubuntu1
+ARG nvidia_driver_version=535
+ARG nvidia_apt_version=535.54.03-0ubuntu0.22.04.1
 ARG ubuntu_short_version=2204
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -34,7 +34,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nv
     xserver-xorg-video-nvidia-$nvidia_driver_version=$nvidia_apt_version libnvidia-cfg1-$nvidia_driver_version=$nvidia_apt_version \
     libnvidia-fbc1-$nvidia_driver_version=$nvidia_apt_version nvidia-kernel-common-$nvidia_driver_version=$nvidia_apt_version libnvidia-extra-$nvidia_driver_version=$nvidia_apt_version\
     nvidia-compute-utils-$nvidia_driver_version=$nvidia_apt_version \
-    nvidia-utils-$nvidia_driver_version=$nvidia_apt_version
+    nvidia-utils-$nvidia_driver_version=$nvidia_apt_version 
 
 
 ############
@@ -72,11 +72,27 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     libcublas-dev-11-7 \
     libcusparse-dev-11-7
 
+
+###########
+# add cudnn (apparently works for all cuda 11.x versions)
+ENV CUDNN_VERSION 8.4.1.50
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
+
+WORKDIR /tmp
+
+RUN wget -O /tmp/cudnn-linux-x64.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.4.1/local_installers/11.6/cudnn-linux-x86_64-8.4.1.50_cuda11.6-archive.tar.xz && \
+    tar -xvf /tmp/cudnn-linux-x64.tgz && \
+    cp -a /tmp/cudnn-linux-x86_64-8.4.1.50_cuda11.6-archive/include/cudnn.h /usr/local/include/ && \
+    cp -a /tmp/cudnn-linux-x86_64-8.4.1.50_cuda11.6-archive/lib/libcudnn* /usr/local/lib/ && \
+    chmod a+r /usr/local/include/cudnn.h /usr/local/lib/libcudnn* && \
+    rm -Rf /tmp/cudnn-linux-x64.tgz && \
+    rm -Rf /tmp/cudnn-linux-x86_64-8.4.1.50_cuda11.6-archive && \
+    ldconfig
+
 ## gstreamer 
 
 RUN \
     apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         python3-dev \
